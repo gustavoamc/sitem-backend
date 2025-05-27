@@ -1,0 +1,25 @@
+{
+  "name": "sitem-backend",
+  "version": "1.0.0",
+  "description": "sitem's plataform backend",
+  "main": "server.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "author": "gustavoamc",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^4.18.2",
+    "mongoose": "^7.8.7",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.2.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.1.6"
+  }
+}
