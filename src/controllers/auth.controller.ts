@@ -21,7 +21,7 @@ export const registerUser = async (req: Request, res: Response) => {
       password: hashedPassword,
     });
 
-    const token = await createUserToken(user.id, req, res);
+    const token = await createUserToken(user.id, req, res, "Usuário registrado com sucesso!");
   } catch (err) {
     res.status(500).json({ message: "Erro ao registrar", error: err });
   }

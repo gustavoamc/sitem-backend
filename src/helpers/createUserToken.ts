@@ -4,7 +4,8 @@ import jwt from "jsonwebtoken";
 export const createUserToken = async (
   userId: string,
   req: Request,
-  res: Response
+  res: Response,
+  message?: string
 ): Promise<void> => {
   const token = jwt.sign(
     { id: userId },
@@ -13,7 +14,7 @@ export const createUserToken = async (
   );
 
   res.status(200).json({
-    message: "Autenticado com sucesso!",
+    message: message ?? "Autenticado com sucesso!",
     token
   });
 };
