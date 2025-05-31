@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { Room } from "../../shared/types/room";
 
-interface RoomDocument extends Omit<Room, "_id" | "createdAt">, Document {}
+export interface RoomDocument extends Omit<Room, "_id" | "createdAt">, Document {}
 
 const RoomSchema = new Schema<RoomDocument>(
   {

@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { Message } from "../../shared/types/message";
 
-interface MessageDocument extends Omit<Message, "_id" | "timestamp">, Document {}
+export interface MessageDocument extends Omit<Message, "_id" | "timestamp">, Document {}
 
 const MessageSchema = new Schema<MessageDocument>(
   {
