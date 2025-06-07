@@ -45,3 +45,22 @@ export const editUser = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Erro ao atualizar dados!' });
     }
 }
+
+export const getUser = async (req: Request, res: Response) => {
+    const user = await getUserByToken(req);
+    if (!user) {
+        res.status(401).json({ message: 'Acesso negado!' });
+        return;
+    }
+
+    const objUser = user.toObject();
+
+    res.status(200).json({ 
+        user: {
+            id: objUser._id, 
+            nickname: objUser.nickname, 
+            email: objUser.email,
+            role: objUser.role
+        } 
+    });
+}
