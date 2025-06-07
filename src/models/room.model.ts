@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { Room } from "../../shared/types/room";
+import { Room } from "../../shared/types/Room";
 
 export interface RoomDocument extends Omit<Room, "_id" | "createdAt">, Document {}
 

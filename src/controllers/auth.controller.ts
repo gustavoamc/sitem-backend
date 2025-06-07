@@ -3,8 +3,6 @@ import bcrypt from "bcryptjs";
 import { UserModel } from "../models/user.model";
 import { createUserToken } from "../helpers/createUserToken";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
-
 export const registerUser = async (req: Request, res: Response) => {
   try {
     const { nickname, email, password } = req.body;
@@ -13,6 +11,8 @@ export const registerUser = async (req: Request, res: Response) => {
     
     const userExists = await UserModel.findOne({ email });
     if (userExists) return res.status(400).json({ message: "Email já em uso." });
+
+    if (password.length < 6) return res.status(400).json({ message: "A senha deve ter no mínimo 6 caracteres." });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await UserModel.create({
