@@ -1,20 +1,17 @@
-import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { Role } from "../../shared/types/User";
 
 export const createUserToken = async (
-  userId: string,
-  req: Request,
-  res: Response,
-  message?: string
-): Promise<void> => {
-  const token = jwt.sign(
-    { id: userId },
+  id: string,
+  role: Role
+): Promise<string> => {
+  const token = jwt.sign({ 
+      id: id,
+      role: role
+    },
     process.env.JWT_SECRET as string,
     { expiresIn: "7d" }
   );
 
-  res.status(200).json({
-    message: message ?? "Autenticado com sucesso!",
-    token
-  });
+  return token;
 };

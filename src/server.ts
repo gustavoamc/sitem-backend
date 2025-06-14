@@ -4,8 +4,11 @@ import app from "./app";
 import dotenv from "dotenv";
 import { setupSocket } from "./sockets/setupSocket";
 import { connectDB } from "./config/db";
+import ensureRootExists from "./helpers/ensureRootExists";
 
 dotenv.config();
+
+ensureRootExists();
 
 const server = createServer(app);
 const io = new Server(server, {

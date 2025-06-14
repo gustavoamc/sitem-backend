@@ -21,7 +21,18 @@ export const registerUser = async (req: Request, res: Response) => {
       password: hashedPassword,
     });
 
-    const token = await createUserToken(user.id, req, res, "Usuário registrado com sucesso!");
+    const token = await createUserToken(user.id, user.role);
+
+    res.status(200).json({
+      message: "Conta iniciada com sucesso!",
+      token,
+      user:{
+        id: user.id,
+        nickname: user.nickname,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: "Erro ao registrar", error: err });
   }
@@ -43,7 +54,18 @@ export const loginUser = async (req: Request, res: Response) => {
     // console.log(user._id); new ObjectId("683b4408773b84b76fbeeb77") //literal
     // console.log(user.id); 683b4408773b84b76fbeeb77 //mongoose getter for user._id.toString()
 
-    const token = await createUserToken(user.id, req, res);
+    const token = await createUserToken(user.id, user.role);
+
+    res.status(200).json({
+      message: "Login efetuado com sucesso!",
+      token,
+      user: {
+        id: user.id,
+        nickname: user.nickname,
+        email: user.email,
+        role: user.role,
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: "Erro ao logar", error: err });
   }

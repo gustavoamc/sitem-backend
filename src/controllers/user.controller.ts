@@ -46,6 +46,14 @@ export const editUser = async (req: Request, res: Response) => {
     }
 }
 
+/**
+ * Retrieve user information in a secure manner
+ * @route GET /user/
+ * @param {Request} req - Express request object containing authentication token
+ * @param {Response} res - Express response object
+ * @returns {Object} User profile details including id, nickname, email, and role
+ * @description Fetches authenticated user's profile information after token validation
+ */
 export const getUser = async (req: Request, res: Response) => {
     const user = await getUserByToken(req);
     if (!user) {
