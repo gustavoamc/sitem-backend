@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { getUserByToken } from '../helpers/getUserByToken';
 import { UserModel } from '../models/user.model';
 import bcrypt from 'bcryptjs';
+import verifyToken from '../helpers/verifyToken';
 
 /**
  * Edit user profile information
@@ -72,3 +73,39 @@ export const getUser = async (req: Request, res: Response) => {
         } 
     });
 }
+
+/**
+ * Change user's password after verifying current password
+ * @route POST /user/change-password
+ * @param {Request} req - Express request object containing authentication token and password details
+ * @param {Response} res - Express response object
+ * @returns {Object} Success or error message after password change attempt
+ * @description Allows authenticated user to change their password by providing current and new password
+ * Validates password length and uses different salt rounds based on user role
+ */
+export const changePassword = async (req: Request, res: Response) => {
+  const decodedPayload = verifyToken(req)
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    const user = await UserModel.findById(decodedPayload?.id).select('+password');
+    if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(401).json({ message: 'Senha atual incorreta' });
+
+    // maintains password minnimum length
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'A nova senha deve ter pelo menos 8 caracteres' });
+    }
+
+    //if role isn't "user", use 12 as salt rounds
+    user.password = await bcrypt.hash(newPassword, user.role === 'user' ? 10 : 12);
+    await user.save();
+
+    return res.status(200).json({ message: 'Senha alterada com sucesso' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Erro ao trocar senha' });
+  }
+};

@@ -3,6 +3,14 @@ import bcrypt from "bcryptjs";
 import { UserModel } from "../models/user.model";
 import { createUserToken } from "../helpers/createUserToken";
 
+/**
+ * Registers a new user in the system
+ * @route POST /api/auth/register
+ * @param {Request} req - Express request object containing user registration details
+ * @param {Response} res - Express response object
+ * @returns {Object} User registration response with token and user details
+ * @throws {Error} Returns 400 status for validation errors, 500 for server errors
+ */
 export const registerUser = async (req: Request, res: Response) => {
   try {
     const { nickname, email, password } = req.body;
@@ -12,7 +20,7 @@ export const registerUser = async (req: Request, res: Response) => {
     const userExists = await UserModel.findOne({ email });
     if (userExists) return res.status(400).json({ message: "Email já em uso." });
 
-    if (password.length < 6) return res.status(400).json({ message: "A senha deve ter no mínimo 6 caracteres." });
+    if (password.length < 8) return res.status(400).json({ message: "A senha deve ter no mínimo 6 caracteres." });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await UserModel.create({
@@ -38,13 +46,21 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Authenticates a user by email and password
+ * @route POST /api/auth/login
+ * @param {Request} req - Express request object containing user login credentials
+ * @param {Response} res - Express response object
+ * @returns {Object} User login response with token and user details
+ * @throws {Error} Returns 400 status for validation errors, 500 for server errors
+ */
 export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) return res.status(400).json({ message: "Todos os campos são obrigatórios." });
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email }).select("+password");
     if (!user) return res.status(400).json({ message: "Usuário não encontrado." });
 
     const isMatch = await bcrypt.compare(password, user.password);
