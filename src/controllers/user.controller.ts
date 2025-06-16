@@ -10,7 +10,7 @@ import verifyToken from '../helpers/verifyToken';
  * @param {Request} req - Express request object containing user update details
  * @param {Response} res - Express response object
  * @returns {Object} Updated user profile or error message
- * @description Updates user profile with new nickname, email, and password after token authentication
+ * @description Updates user profile with new nickname and email after token authentication
  */
 export const editUser = async (req: Request, res: Response) => {
     const user = await getUserByToken(req); // get user from token, because "body" is the new user data
@@ -20,12 +20,10 @@ export const editUser = async (req: Request, res: Response) => {
         return;
     }
 
-    const { nickname, email, password } = req.body;
+    const { nickname, email } = req.body;
 
     // Validate input fields
-    if (!nickname || !email || !password) return res.status(400).json({ message: "Todos os campos são obrigatórios." });
-
-    if (password.length < 6) return res.status(400).json({ message: "A senha deve ter no mínimo 6 caracteres." });
+    if (!nickname || !email ) return res.status(400).json({ message: "Todos os campos são obrigatórios." });
 
     if (user.email !== email) {
         const userExists = await UserModel.findOne({ 
@@ -35,11 +33,8 @@ export const editUser = async (req: Request, res: Response) => {
         if (userExists) return res.status(400).json({ message: "Email já em uso." });
     }
 
-    // Update user data
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     try {
-        user.set({nickname, email, hashedPassword});
+        user.set({nickname, email});
         await user.save();
         res.status(200).json({ message: 'Dados atualizados!' });
     } catch (error) {
@@ -47,6 +42,7 @@ export const editUser = async (req: Request, res: Response) => {
     }
 }
 
+//TODO find a use for this function
 /**
  * Retrieve user information in a secure manner
  * @route GET /user/

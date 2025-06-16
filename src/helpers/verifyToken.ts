@@ -4,7 +4,6 @@ import { Request } from "express";
 interface DecodedPayload {
   id: string;
   role: string;
-  [key: string]: any;
 }
 
 /**

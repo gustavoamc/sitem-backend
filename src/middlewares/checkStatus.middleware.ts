@@ -16,11 +16,11 @@ export function checkStatus(allowedRoles: ("user" | "admin" | "root")[]) {
       const user = await getUserByToken(req);
 
       if (!user) {
-        return res.status(404).json({ message: "Usuário não encontrado." });
+        return res.status(404).json({ message: "Usuário/Token não encontrado." });
       }
 
     //  Attach user to request - for future use - pass user to other middlewares and controllers so as to not query the database again
-    //   req.user = user as unknown as User;
+    //   req.user = user as unknown as User; //OR body.user = user;
 
       // Verify ban status
       if (user.isBanned) {
