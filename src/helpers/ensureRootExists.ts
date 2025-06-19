@@ -6,15 +6,11 @@ async function ensureRootExists() {
   if (existingRoot) {
     console.log("✅ Conta root já existe.");
     return;
-  };
+  }
 
-  const {
-    ROOT_NICKNAME,
-    ROOT_EMAIL,
-    ROOT_PASSWORD,
-  } = process.env;
+  const { ROOT_username, ROOT_EMAIL, ROOT_PASSWORD } = process.env;
 
-  if (!ROOT_NICKNAME || !ROOT_EMAIL || !ROOT_PASSWORD) {
+  if (!ROOT_username || !ROOT_EMAIL || !ROOT_PASSWORD) {
     console.warn("⚠️ Variáveis do usuário root não configuradas no .env"); //make root route ?
     return;
   }
@@ -22,7 +18,7 @@ async function ensureRootExists() {
   const hashedPassword = await bcrypt.hash(ROOT_PASSWORD, 12);
 
   await UserModel.create({
-    nickname: ROOT_NICKNAME,
+    username: ROOT_username,
     email: ROOT_EMAIL,
     password: hashedPassword,
     role: "root",
@@ -31,4 +27,4 @@ async function ensureRootExists() {
   console.log("✅ Conta root criada com sucesso.");
 }
 
-export default ensureRootExists ;
+export default ensureRootExists;

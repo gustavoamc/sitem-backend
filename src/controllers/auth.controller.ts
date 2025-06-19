@@ -13,18 +13,25 @@ import { createUserToken } from "../helpers/createUserToken";
  */
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { nickname, email, password } = req.body;
+    const { username, email, password } = req.body;
 
-    if (!nickname || !email || !password) return res.status(400).json({ message: "Todos os campos são obrigatórios." });
-    
+    if (!username || !email || !password)
+      return res
+        .status(400)
+        .json({ message: "Todos os campos são obrigatórios." });
+
     const userExists = await UserModel.findOne({ email });
-    if (userExists) return res.status(400).json({ message: "Email já em uso." });
+    if (userExists)
+      return res.status(400).json({ message: "Email já em uso." });
 
-    if (password.length < 8) return res.status(400).json({ message: "A senha deve ter no mínimo 6 caracteres." });
+    if (password.length < 8)
+      return res
+        .status(400)
+        .json({ message: "A senha deve ter no mínimo 6 caracteres." });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await UserModel.create({
-      nickname,
+      username,
       email,
       password: hashedPassword,
     });
@@ -34,9 +41,9 @@ export const registerUser = async (req: Request, res: Response) => {
     res.status(200).json({
       message: "Conta iniciada com sucesso!",
       token,
-      user:{
+      user: {
         id: user.id,
-        nickname: user.nickname,
+        username: user.username,
         email: user.email,
         role: user.role,
       },
@@ -58,10 +65,14 @@ export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) return res.status(400).json({ message: "Todos os campos são obrigatórios." });
+    if (!email || !password)
+      return res
+        .status(400)
+        .json({ message: "Todos os campos são obrigatórios." });
 
     const user = await UserModel.findOne({ email }).select("+password");
-    if (!user) return res.status(400).json({ message: "Usuário não encontrado." });
+    if (!user)
+      return res.status(400).json({ message: "Usuário não encontrado." });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Senha incorreta." });
@@ -77,10 +88,10 @@ export const loginUser = async (req: Request, res: Response) => {
       token,
       user: {
         id: user.id,
-        nickname: user.nickname,
+        username: user.username,
         email: user.email,
         role: user.role,
-      }
+      },
     });
   } catch (err) {
     res.status(500).json({ message: "Erro ao logar", error: err });

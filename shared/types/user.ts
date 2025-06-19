@@ -2,7 +2,7 @@ export type Role = "user" | "admin" | "root";
 
 export interface User {
   _id: string;
-  nickname: string;
+  username: string;
   email: string;
   password: string;
   createdAt: string;

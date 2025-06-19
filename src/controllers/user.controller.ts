@@ -1,46 +1,60 @@
-import { Request, Response } from 'express';
-import { getUserByToken } from '../helpers/getUserByToken';
-import { UserModel } from '../models/user.model';
-import bcrypt from 'bcryptjs';
-import verifyToken from '../helpers/verifyToken';
+import { Request, Response } from "express";
+import { getUserByToken } from "../helpers/getUserByToken";
+import { UserModel } from "../models/user.model";
+import bcrypt from "bcryptjs";
+import verifyToken from "../helpers/verifyToken";
 
 /**
  * Edit user profile information
- * @route PUT /user/edit
+ * @route PATCH /user/edit
  * @param {Request} req - Express request object containing user update details
  * @param {Response} res - Express response object
  * @returns {Object} Updated user profile or error message
- * @description Updates user profile with new nickname and email after token authentication
+ * @description Updates user profile with new username and email after token authentication
  */
 export const editUser = async (req: Request, res: Response) => {
-    const user = await getUserByToken(req); // get user from token, because "body" is the new user data
+  const user = await getUserByToken(req); // get user from token, because "body" is the new user data
 
-    if (!user) {
-        res.status(401).json({ message: 'Acesso negado!' });
-        return;
-    }
+  if (!user) {
+    res.status(401).json({ message: "Acesso negado!" });
+    return;
+  }
 
-    const { nickname, email } = req.body;
+  const { username, email } = req.body;
 
-    // Validate input fields
-    if (!nickname || !email ) return res.status(400).json({ message: "Todos os campos são obrigatórios." });
+  // Validate input fields
+  if (!username || !email)
+    return res
+      .status(400)
+      .json({ message: "Todos os campos são obrigatórios." });
 
-    if (user.email !== email) {
-        const userExists = await UserModel.findOne({ 
-            email,
-            _id: { $ne: user._id }
-        });
-        if (userExists) return res.status(400).json({ message: "Email já em uso." });
-    }
+  if (user.email !== email) {
+    const userExists = await UserModel.findOne({
+      email,
+      _id: { $ne: user._id },
+    });
+    if (userExists)
+      return res.status(400).json({ message: "Email já em uso." });
+  }
 
-    try {
-        user.set({nickname, email});
-        await user.save();
-        res.status(200).json({ message: 'Dados atualizados!' });
-    } catch (error) {
-        res.status(500).json({ message: 'Erro ao atualizar dados!' });
-    }
-}
+  if (user.username !== username) {
+    const userExists = await UserModel.findOne({
+      username,
+      _id: { $ne: user._id },
+    });
+    if (userExists)
+      return res.status(400).json({ message: "username já em uso." });
+  }
+  //TODO Check if username is already in use and (when mailer is ready) move email to it's own route, for validation
+
+  try {
+    user.set({ username, email });
+    await user.save();
+    res.status(200).json({ message: "Dados atualizados!" });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao atualizar dados!" });
+  }
+};
 
 //TODO find a use for this function
 /**
@@ -48,27 +62,27 @@ export const editUser = async (req: Request, res: Response) => {
  * @route GET /user/
  * @param {Request} req - Express request object containing authentication token
  * @param {Response} res - Express response object
- * @returns {Object} User profile details including id, nickname, email, and role
+ * @returns {Object} User profile details including id, username, email, and role
  * @description Fetches authenticated user's profile information after token validation
  */
 export const getUser = async (req: Request, res: Response) => {
-    const user = await getUserByToken(req);
-    if (!user) {
-        res.status(401).json({ message: 'Acesso negado!' });
-        return;
-    }
+  const user = await getUserByToken(req);
+  if (!user) {
+    res.status(401).json({ message: "Acesso negado!" });
+    return;
+  }
 
-    const objUser = user.toObject();
+  const objUser = user.toObject();
 
-    res.status(200).json({ 
-        user: {
-            id: objUser._id, 
-            nickname: objUser.nickname, 
-            email: objUser.email,
-            role: objUser.role
-        } 
-    });
-}
+  res.status(200).json({
+    user: {
+      id: objUser._id,
+      username: objUser.username,
+      email: objUser.email,
+      role: objUser.role,
+    },
+  });
+};
 
 /**
  * Change user's password after verifying current password
@@ -80,28 +94,37 @@ export const getUser = async (req: Request, res: Response) => {
  * Validates password length and uses different salt rounds based on user role
  */
 export const changePassword = async (req: Request, res: Response) => {
-  const decodedPayload = verifyToken(req)
+  const decodedPayload = verifyToken(req);
   const { currentPassword, newPassword } = req.body;
 
   try {
-    const user = await UserModel.findById(decodedPayload?.id).select('+password');
-    if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+    const user = await UserModel.findById(decodedPayload?.id).select(
+      "+password"
+    );
+    if (!user)
+      return res.status(404).json({ message: "Usuário não encontrado" });
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) return res.status(401).json({ message: 'Senha atual incorreta' });
+    if (!isMatch)
+      return res.status(401).json({ message: "Senha atual incorreta" });
 
     // maintains password minnimum length
     if (newPassword.length < 8) {
-      return res.status(400).json({ message: 'A nova senha deve ter pelo menos 8 caracteres' });
+      return res
+        .status(400)
+        .json({ message: "A nova senha deve ter pelo menos 8 caracteres" });
     }
 
     //if role isn't "user", use 12 as salt rounds
-    user.password = await bcrypt.hash(newPassword, user.role === 'user' ? 10 : 12);
+    user.password = await bcrypt.hash(
+      newPassword,
+      user.role === "user" ? 10 : 12
+    );
     await user.save();
 
-    return res.status(200).json({ message: 'Senha alterada com sucesso' });
+    return res.status(200).json({ message: "Senha alterada com sucesso" });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: 'Erro ao trocar senha' });
+    return res.status(500).json({ message: "Erro ao trocar senha" });
   }
 };
