@@ -38,7 +38,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
     const token = await createUserToken(user.id, user.role);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Conta iniciada com sucesso!",
       token,
       user: {
@@ -49,7 +49,7 @@ export const registerUser = async (req: Request, res: Response) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ message: "Erro ao registrar", error: err });
+    return res.status(500).json({ message: "Erro ao registrar", error: err });
   }
 };
 
@@ -94,6 +94,6 @@ export const loginUser = async (req: Request, res: Response) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ message: "Erro ao logar", error: err });
+    return res.status(500).json({ message: "Erro ao logar", error: err });
   }
 };

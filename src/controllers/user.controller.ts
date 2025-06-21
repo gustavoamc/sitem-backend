@@ -16,17 +16,14 @@ export const editUser = async (req: Request, res: Response) => {
   const user = await getUserByToken(req); // get user from token, because "body" is the new user data
 
   if (!user) {
-    res.status(401).json({ message: "Acesso negado!" });
-    return;
+    return res.status(401).json({ message: "Acesso negado!" });
   }
 
   const { username, email } = req.body;
 
   // Validate input fields
   if (!username || !email)
-    return res
-      .status(400)
-      .json({ message: "Todos os campos são obrigatórios." });
+    return res.status(400).json({ message: "Todos os campos são obrigatórios." });
 
   if (user.email !== email) {
     const userExists = await UserModel.findOne({
@@ -45,14 +42,14 @@ export const editUser = async (req: Request, res: Response) => {
     if (userExists)
       return res.status(400).json({ message: "username já em uso." });
   }
-  //TODO Check if username is already in use and (when mailer is ready) move email to it's own route, for validation
+  //TODO When mailer is ready move email to it's own route, for validation
 
   try {
     user.set({ username, email });
     await user.save();
-    res.status(200).json({ message: "Dados atualizados!" });
+    return res.status(200).json({ message: "Dados atualizados!" });
   } catch (error) {
-    res.status(500).json({ message: "Erro ao atualizar dados!" });
+    return res.status(500).json({ message: "Erro ao atualizar dados!" });
   }
 };
 
@@ -68,13 +65,12 @@ export const editUser = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
   const user = await getUserByToken(req);
   if (!user) {
-    res.status(401).json({ message: "Acesso negado!" });
-    return;
+    return res.status(401).json({ message: "Acesso negado!" });
   }
 
   const objUser = user.toObject();
 
-  res.status(200).json({
+  return res.status(200).json({
     user: {
       id: objUser._id,
       username: objUser.username,
@@ -123,8 +119,9 @@ export const changePassword = async (req: Request, res: Response) => {
     await user.save();
 
     return res.status(200).json({ message: "Senha alterada com sucesso" });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Erro ao trocar senha" });
+  } catch (error) {
+    return res.status(500).json({ message: "Erro ao trocar senha", error });
   }
 };
+
+//TODO create delete user route (soft delete is still in question, but limit it to 30 days, like {softDelete: true, softDeleteTimeInDays: 30})

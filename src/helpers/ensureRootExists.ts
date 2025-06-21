@@ -8,9 +8,9 @@ async function ensureRootExists() {
     return;
   }
 
-  const { ROOT_username, ROOT_EMAIL, ROOT_PASSWORD } = process.env;
+  const { ROOT_USERNAME, ROOT_EMAIL, ROOT_PASSWORD } = process.env;
 
-  if (!ROOT_username || !ROOT_EMAIL || !ROOT_PASSWORD) {
+  if (!ROOT_USERNAME || !ROOT_EMAIL || !ROOT_PASSWORD) {
     console.warn("⚠️ Variáveis do usuário root não configuradas no .env"); //make root route ?
     return;
   }
@@ -18,7 +18,7 @@ async function ensureRootExists() {
   const hashedPassword = await bcrypt.hash(ROOT_PASSWORD, 12);
 
   await UserModel.create({
-    username: ROOT_username,
+    username: ROOT_USERNAME,
     email: ROOT_EMAIL,
     password: hashedPassword,
     role: "root",
