@@ -193,13 +193,15 @@ export const getAllUsers = async (req: Request, res: Response) => {
         };
 
         if (role && typeof role === "string") {
-            filter.role = role;
+            filter.role = { 
+                $in: role.split(','), //"user,admin" -> ['user','admin'] - (if 'root' is sent, a error will be thrown)
+                $nin: 'root'
+            };
         }
 
         if (typeof isBanned !== "undefined") {
             filter.isBanned = isBanned === "true";// query string comes as string
         }
-
 
         const users = await UserModel.find(filter);
 
@@ -208,3 +210,5 @@ export const getAllUsers = async (req: Request, res: Response) => {
         return res.status(500).json({ message: "Erro ao buscar usuários.", error });
     }
 }
+
+//TODO: website and system "patch notes" routes

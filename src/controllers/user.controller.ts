@@ -53,7 +53,7 @@ export const editUser = async (req: Request, res: Response) => {
   }
 };
 
-//TODO find a use for this function
+//TODO Rename to "getOwnInfo", find a use for this function (add friend ?, in-room use ?), it retrives only own user data
 /**
  * Retrieve user information in a secure manner
  * @route GET /user/
