@@ -19,7 +19,7 @@ export function checkStatus(allowedRoles: ("user" | "admin" | "root")[]) {
         return res.status(404).json({ message: "Usuário/Token não encontrado." });
       }
 
-    //  Attach user to request - for future use - pass user to other middlewares and controllers so as to not query the database again
+    //TODO Attach user to request - for future use - pass user to other middlewares and controllers so as to not query the database again
     //   req.user = user as unknown as User; //OR body.user = user;
 
       // Verify ban status
@@ -33,7 +33,10 @@ export function checkStatus(allowedRoles: ("user" | "admin" | "root")[]) {
       }
 
       next();
-    } catch (err) {
+    } catch (error: any) {
+      if (error.name === "TokenExpiredError"){
+        return res.status(401).json({message: "Token expirado."})
+      }
       return res.status(401).json({ message: "Token inválido." });
     }
   };

@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { UserModel } from "../models/user.model"; // ajuste para seu caminho
+import { UserModel } from "../models/user.model";
 
 async function ensureRootExists() {
   const existingRoot = await UserModel.findOne({ role: "root" });

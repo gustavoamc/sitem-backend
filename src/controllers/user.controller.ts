@@ -16,7 +16,7 @@ export const editUser = async (req: Request, res: Response) => {
   const user = await getUserByToken(req); // get user from token, because "body" is the new user data
 
   if (!user) {
-    return res.status(401).json({ message: "Acesso negado!" });
+    return res.status(404).json({ message: "Usuário não encontrado!" });
   }
 
   const { username, email } = req.body;
@@ -65,7 +65,7 @@ export const editUser = async (req: Request, res: Response) => {
 export const getUser = async (req: Request, res: Response) => {
   const user = await getUserByToken(req);
   if (!user) {
-    return res.status(401).json({ message: "Acesso negado!" });
+    return res.status(404).json({ message: "Usuário não encontrado!" });
   }
 
   const objUser = user.toObject();

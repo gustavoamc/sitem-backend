@@ -15,7 +15,7 @@ export const promoteAdmin = async (req: Request, res: Response) => {
         const rootUser = await getUserByToken(req);
 
         if (!rootUser || rootUser.role !== "root") {
-            return res.status(401).json({ message: "Acesso negado!" });
+            return res.status(403).json({ message: "Acesso negado!" });
         }
 
         const user = await UserModel.findById(userId);
@@ -50,7 +50,7 @@ export const demoteAdmin = async (req: Request, res: Response) => {
         const rootUser = await getUserByToken(req);
 
         if (!rootUser || rootUser.role !== "root") {
-            return res.status(401).json({ message: "Acesso negado!" });
+            return res.status(403).json({ message: "Acesso negado!" });
         }
 
         const user = await UserModel.findById(userId);
@@ -185,7 +185,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
         const reqUser = await getUserByToken(req);
 
         if (!reqUser) {
-            return res.status(401).json({ message: "Acesso negado!" });
+            return res.status(404).json({ message: "Acesso negado!" });
         }
 
         const filter: any = {
