@@ -1,8 +1,7 @@
 import { createServer } from "http";
-import { Server } from "socket.io";
 import app from "./app";
 import dotenv from "dotenv";
-import { setupSocket } from "./sockets/setupSocket";
+import { initIO } from "./sockets/setupSocket";
 import { connectDB } from "./config/db";
 import ensureRootExists from "./helpers/ensureRootExists";
 
@@ -10,14 +9,11 @@ dotenv.config();
 
 ensureRootExists();
 
+// creates an HTTP server to integrate with Socket.IO
 const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*"
-  }
-});
 
-setupSocket(io); // configures socket events
+// initializes Socket.IO with the HTTP server
+initIO(server);
 
 const PORT = process.env.PORT || 3000;
 connectDB().then(() => {

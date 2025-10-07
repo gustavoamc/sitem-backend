@@ -42,7 +42,7 @@ export const registerUser = async (req: Request, res: Response) => {
       message: "Conta iniciada com sucesso!",
       token,
       user: {
-        id: user.id,
+        _id: user.id,
         username: user.username,
         email: user.email,
         role: user.role,
@@ -87,7 +87,7 @@ export const loginUser = async (req: Request, res: Response) => {
       message: "Login efetuado com sucesso!",
       token,
       user: {
-        id: user.id,
+        _id: user.id,
         username: user.username,
         email: user.email,
         role: user.role,

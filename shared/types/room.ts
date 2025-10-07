@@ -4,6 +4,8 @@ export interface Room {
   _id: string;
   name: string;
   isPrivate: boolean;
+  owner: Types.ObjectId;
   participants: Types.ObjectId[]; // ou string[], se preferir serialização
-  createdAt: string;
+  createdAt: string | Date;
+  updatedAt?: string | Date;
 }

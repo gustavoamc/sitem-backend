@@ -5,7 +5,8 @@ export interface User {
   username: string;
   email: string;
   password: string;
-  createdAt: string;
+  createdAt:  string | Date;
+  updatedAt?: string | Date;
   role: Role;
   isBanned: boolean;
   banReason?: string;

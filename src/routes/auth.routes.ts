@@ -6,5 +6,6 @@ const router = require('express').Router()
 
 router.post('/register', registerUser)
 router.post('/login', loginUser)
+//TODO: reset password
 
 export default router

@@ -5,5 +5,6 @@ export interface Log {
   userId: Types.ObjectId;
   action: string;
   ip: string;
-  createdAt: string;
+  createdAt: string | Date;
+  updatedAt?: string | Date;
 }

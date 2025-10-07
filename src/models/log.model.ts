@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { Log } from "../../shared/types/Log";
+import { Log } from "../../shared/types/log";
 
 interface LogDocument extends Omit<Log, "_id" | "createdAt">, Document {}
 

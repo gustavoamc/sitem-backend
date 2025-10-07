@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { User } from "../../shared/types/User";
+import { User } from "../../shared/types/user";
 
 export interface UserDocument
   extends Omit<User, "_id" | "createdAt">,
