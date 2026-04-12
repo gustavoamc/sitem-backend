@@ -11,8 +11,8 @@ async function ensureRootExists() {
   const { ROOT_USERNAME, ROOT_EMAIL, ROOT_PASSWORD } = process.env;
 
   if (!ROOT_USERNAME || !ROOT_EMAIL || !ROOT_PASSWORD) {
-    console.warn("⚠️ Variáveis do usuário root não configuradas no .env"); //make root route ?
-    return;
+    console.error("❌ Variáveis do usuário root não configuradas no .env");
+    return Error("Critical error, no root credentials");
   }
 
   const hashedPassword = await bcrypt.hash(ROOT_PASSWORD, 12);
